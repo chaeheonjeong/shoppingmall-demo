@@ -2,12 +2,12 @@ package com.example.shoppingmall.product;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @AllArgsConstructor // 필드로 생성자 코드 구현
@@ -29,12 +29,15 @@ public class ProductService {
     public List<Product> findProducts(int limit, int currentPage) {
 
         Pageable pageable = PageRequest.of(currentPage, limit);
-        Page<Product> productPage = productJPARepository.findAll();
-        return productRepository.findProducts(limit, currentPage);
+        Page<Product> productPage = productJPARepository.findAll(pageable);
+        return productPage.getContent();
     }
 
     public List<Product> findProducts(int limit, int currentPage, int categoryId) {
-        return productRepository.findProducts(limit, currentPage, categoryId);
+
+        Pageable pageable = PageRequest.of(currentPage, limit);
+        Page<Product> productPage = productJPARepository.findByCategoryId(categoryId, pageable);
+        return productPage.getContent();
     }
 
 //    public void deleteProduct(int id) {
